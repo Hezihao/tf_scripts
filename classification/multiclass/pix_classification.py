@@ -36,18 +36,30 @@ probability_model = tf.keras.Sequential([model,
 predictions = probability_model.predict(test_images)
 
 # visualization
-plt.figure('Example')
-plt.imshow(train_images[0])
+# visualize the 1st pic in examples
+plt.figure('Example 1')
+plt.imshow(train_images[0])			# used for examing those false detections here
 plt.colorbar()
+print(train_images.shape)
+print(train_images[0].shape)
+plt.xlabel(class_names[np.argmax(probability_model.predict(np.expand_dims(train_images[0], 0)))])		# expand the dimension of 1 sample, to get it fit the input format
 plt.grid(False)
 
-plt.figure(figsize=(10, 10))
+# visualize training dataset(first 25 pix)
+plt.figure('predictions', figsize=(10, 10))
+faults = []
 for i in range(25):
+	offset = 50
 	plt.subplot(5,5,i+1)
 	plt.xticks([])
 	plt.yticks([])
 	plt.grid(False)
-	plt.imshow(train_images[i], cmap=plt.cm.binary)
-	plt.xlabel(class_names[train_labels[i]])
-	print(type(class_names[train_labels[i]]))
+	# plt.imshow(train_images[i], cmap=plt.cm.binary)
+	# plt.xlabel(class_names[train_labels[i]])
+	# print(type(class_names[train_labels[i]]))
+	plt.imshow(test_images[i+offset], cmap=plt.cm.binary)
+	plt.xlabel(class_names[np.argmax(predictions[i+offset])]+'/'+str(class_names[test_labels[i+offset]] == class_names[np.argmax(predictions[i+offset])]))
+	if(not class_names[test_labels[i+offset]] == class_names[np.argmax(predictions[i+offset])]):
+		faults.append(i+offset)
+print(faults)
 plt.show()
